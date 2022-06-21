@@ -44,6 +44,21 @@ namespace ChatCommands
             }
         }
 
+        // For correctly updating most recent wipe date. Only works if the difference between the months < 2. Ex: June,July works and June,August doesnt work
+        // You can always manually update WipeDate.txt to start fresh, and this function will take it from there as long as its ran once a month. 
+        public void OnGameInitialized()
+        {
+            string filestring = System.IO.File.ReadAllText(@"WipeDate.txt");
+            string newstring = DateTime.UtcNow.ToString("MM-dd-yyyy");
+
+            // [month,day,year]
+            int [] filedate = DateHelper.Parse(filestring);
+            int [] currentdate = DateHelper.Parse(newstring);
+            int [] wipedate = DateHelper.getWipeDate(DateHelper.getDif(filedate,currentdate));
+            DateHelper.writeDate(wipedate);
+
+        }
+
         public override void Load()
         {
             InitConfig();
