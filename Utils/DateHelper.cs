@@ -123,7 +123,7 @@ public class DateHelper
 
         string text = month + "-" + day + "-" + date[2].ToString();
 
-        File.WriteAllText(@"WipeDate.txt", text);
+        File.WriteAllText(@"BepInEx/config/ChatCommands/WipeData.txt", text);
 
     }
 }
