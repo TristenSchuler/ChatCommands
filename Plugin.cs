@@ -21,6 +21,7 @@ namespace ChatCommands
 
         const string INITIALWIPEDATE = "06-17-2022";
         private bool isWipeFileFound = false;
+        private bool isUserClaimsFound = false;
 
         private Harmony harmony;
 
@@ -48,6 +49,15 @@ namespace ChatCommands
             {
                 if (!Directory.Exists("BepInEx/config/ChatCommands")) Directory.CreateDirectory("BepInEx/config/ChatCommands");
                 File.Create("BepInEx/config/ChatCommands/permissions.json");
+            }
+            if (!File.Exists("BepInEx/config/ChatCommands/userclaims.json"))
+            {
+                if (!Directory.Exists("BepInEx/config/ChatCommands")) Directory.CreateDirectory("BepInEx/config/ChatCommands");
+                File.Create("BepInEx/config/ChatCommands/userclaims.json").Dispose();
+            }
+            else
+            {
+                isUserClaimsFound = true;
             }
             if (!File.Exists("BepInEx/config/ChatCommands/WipeData.txt"))
             {
