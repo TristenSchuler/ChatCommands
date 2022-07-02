@@ -54,6 +54,7 @@ namespace ChatCommands.Commands
                 if (tryClaim(ctx, userclaim, reward))
                 {
                     userclaim.incrementClaimAmount();
+                    userclaim.setLastClaim(DateTime.UtcNow);
                     ctx.Event.User.SendSystemMessage($"Claim Successful!");
                     printGivenItems(ctx,reward);
                     ctx.Event.User.SendSystemMessage($"Current amount of Claims: " + userclaim.getClaimAmount());
