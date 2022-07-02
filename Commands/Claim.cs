@@ -23,13 +23,19 @@ namespace ChatCommands.Commands
     [Command("claim", Usage = "claim", Description = "User claims login reward")]
     public static class Claim
     {
+        private const int COOLDOWN_IN_HOURS = 24;
         private static Dictionary<ulong, UserClaim> userclaims;
         private static Dictionary<int, Rewards> rewards;
         public static void Initialize(Context ctx)
         {
 
             loadClaims();
-            loadRewards();
+            bool rewardsLoaded = loadRewards();
+            if (!rewardsLoaded)
+            {
+                ctx.Event.User.SendSystemMessage($"Claim Failed - Failed to properly read \"rewards.json\".");
+                return;
+            }
 
             try
             {
@@ -47,7 +53,7 @@ namespace ChatCommands.Commands
 
                 if (!claimExists)
                 {
-                    ctx.Event.User.SendSystemMessage($"Claim Failed - No reward set for Claim_Amount: "+ claim_amount);
+                    ctx.Event.User.SendSystemMessage($"Claim Failed - No reward set for Claim_Amount: " + claim_amount);
                     return;
                 }
 
@@ -56,7 +62,7 @@ namespace ChatCommands.Commands
                     userclaim.incrementClaimAmount();
                     userclaim.setLastClaim(DateTime.UtcNow);
                     ctx.Event.User.SendSystemMessage($"Claim Successful!");
-                    printGivenItems(ctx,reward);
+                    printGivenItems(ctx, reward);
                     ctx.Event.User.SendSystemMessage($"Current amount of Claims: " + userclaim.getClaimAmount());
                     ctx.Event.User.SendSystemMessage($"You can claim your next reward in: " + getCooldown(userclaim) + " hours");
 
@@ -83,13 +89,13 @@ namespace ChatCommands.Commands
         {
             try
             {
-               if(getCooldown(uclaim)<=0)
-               {
-                CommandHelper.AddItemToInventory(ctx, r.getItemGuid(), r.getItemAmount());
-                return true;
-               }
-               else
-                return false;
+                if (getHourDifference(uclaim) >= COOLDOWN_IN_HOURS)
+                {
+                    CommandHelper.AddItemToInventory(ctx, r.getItemGuid(), r.getItemAmount());
+                    return true;
+                }
+                else
+                    return false;
             }
             catch
             {
@@ -103,14 +109,16 @@ namespace ChatCommands.Commands
         }
 
 
-        private static int getCooldown(UserClaim uclaim)
+        private static int getHourDifference(UserClaim uclaim)
         {
             DateTime claim_dt = DateTime.UtcNow;
             DateTime last_claim_dt = uclaim.getLastClaim();
 
             TimeSpan span = last_claim_dt.Subtract(claim_dt);
+            
+            int totalhours = span.Hours + span.Days * 24;
 
-            return span.Hours;
+            return totalhours;
         }
 
         /*
@@ -131,17 +139,19 @@ namespace ChatCommands.Commands
             }
         }
 
-        private static void loadRewards()
+        private static bool loadRewards()
         {
             if (!File.Exists("BepInEx/config/ChatCommands/rewards.json")) File.Create("BepInEx/config/ChatCommands/rewards.json");
             string json = File.ReadAllText("BepInEx/config/ChatCommands/rewards.json");
             try
             {
                 rewards = JsonSerializer.Deserialize<Dictionary<int, Rewards>>(json);
+                return true;
             }
             catch
             {
                 rewards = new Dictionary<int, Rewards>();
+                return false;
             }
         }
 
