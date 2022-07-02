@@ -6,7 +6,9 @@ using System.IO;
 
 public class DateHelper
 {
-
+    // Change this value to match your servers wipe schedule. 
+    private const int DAYS_BETWEEN_WIPES = 7;
+    
     //Takes "mm-dd-yyyy" returns int arr [month,day,year]
     public static int[] Parse(string date)
     {
@@ -61,17 +63,17 @@ public class DateHelper
         //diff month
         if (torecentmonth >= 0)
         {
-            if (tempdif < 7)
+            if (tempdif < DAYS_BETWEEN_WIPES)
 
                 return new int[] { getDifResult[4], oldday, getDifResult[5] };
 
-            else if (tempdif % 7 == 0)
+            else if (tempdif % DAYS_BETWEEN_WIPES == 0)
                 return new int[] { getDifResult[4], tempdif - torecentmonth, getDifResult[5] };
             else
             {
-                for (int i = 0; i < 7; i++)
+                for (int i = 0; i < DAYS_BETWEEN_WIPES; i++)
                 {
-                    if (tempdif % 7 == 0)
+                    if (tempdif % DAYS_BETWEEN_WIPES == 0)
                         return new int[] { getDifResult[4], tempdif - torecentmonth, getDifResult[5] };
                     else
                         tempdif--;
@@ -83,12 +85,12 @@ public class DateHelper
         // same month
         else
         {
-            if (tempdif < 7)
+            if (tempdif < DAYS_BETWEEN_WIPES)
                 return new int[] { getDifResult[4], oldday, getDifResult[5] };
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < DAYS_BETWEEN_WIPES; i++)
             {
-                if (tempdif % 7 == 0)
+                if (tempdif % DAYS_BETWEEN_WIPES == 0)
                     return new int[] { getDifResult[4], getDifResult[0] + oldday, getDifResult[5] };
                 else
                     tempdif--;
