@@ -4,6 +4,6 @@ namespace ChatCommands
     {
         public const string PLUGIN_GUID = "ChatCommands";
         public const string PLUGIN_NAME = "ChatCommands";
-        public const string PLUGIN_VERSION = "1.1.1";
+        public const string PLUGIN_VERSION = "1.3.0";
     }
 }
