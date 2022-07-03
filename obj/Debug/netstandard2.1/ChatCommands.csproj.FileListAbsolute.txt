@@ -160,8 +160,6 @@ S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.Generate
 S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.AssemblyInfoInputs.cache
 S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.AssemblyInfo.cs
 S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.csproj.CoreCompileInputs.cache
-S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.dll
-S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.pdb
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\ChatCommands.deps.json
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\ChatCommands.dll
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\ChatCommands.pdb
@@ -183,7 +181,6 @@ S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\Il2CppSystem.Xml.Linq
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\Lidgren.Network.dll
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\MagicaCloth.dll
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\Malee.ReorderableList.dll
-S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\Newtonsoft.Json.dll
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\ProjectM.Behaviours.dll
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\ProjectM.Camera.dll
 S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\ProjectM.CastleBuilding.Systems.dll
@@ -313,3 +310,6 @@ S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\RCONServerLib.dll
 S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.csproj.Fody.CopyLocal.cache
 S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.csproj.Fody.RuntimeCopyLocal.cache
 S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.csproj.CopyComplete
+S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.dll
+S:\SE\OutbreakServer\ChatCommands\obj\Debug\netstandard2.1\ChatCommands.pdb
+S:\SE\OutbreakServer\ChatCommands\bin\Debug\netstandard2.1\Newtonsoft.Json.dll

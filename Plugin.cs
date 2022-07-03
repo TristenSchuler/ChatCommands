@@ -3,13 +3,16 @@ using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using ChatCommands.Utils;
 using HarmonyLib;
-using Newtonsoft.Json;
+using System.Text.Json;
 using ProjectM;
 using System;
 using System.IO;
 using System.Reflection;
 using Wetstone.API;
 using Wetstone.Hooks;
+using System.Collections.Generic;
+using System.Linq;
+
 
 namespace ChatCommands
 {
@@ -18,11 +21,9 @@ namespace ChatCommands
     [Reloadable]
     public class Plugin : BasePlugin
     {
-
+        
         const string INITIALWIPEDATE = "06-17-2022";
         private bool isWipeFileFound = false;
-        private bool isUserClaimsFound = false;
-
         private Harmony harmony;
 
         private CommandHandler cmd;
@@ -34,7 +35,7 @@ namespace ChatCommands
 
         private void InitConfig()
         {
-            Prefix = Config.Bind("Config", "Prefix", "?", "The prefix used for chat commands.");
+            Prefix = Config.Bind("Config", "Prefix", ".", "The prefix used for chat commands.");
             DisabledCommands = Config.Bind("Config", "Disabled Commands", "", "Enter command names to disable them. Seperated by commas. Ex.: health,speed");
             WaypointLimit = Config.Bind("Config", "Waypoint Limit", 3, "Sets a waypoint limit per user.");
 
@@ -55,9 +56,10 @@ namespace ChatCommands
                 if (!Directory.Exists("BepInEx/config/ChatCommands")) Directory.CreateDirectory("BepInEx/config/ChatCommands");
                 File.Create("BepInEx/config/ChatCommands/userclaims.json").Dispose();
             }
-            else
+            if (!File.Exists("BepInEx/config/ChatCommands/rewards.json"))
             {
-                isUserClaimsFound = true;
+                if (!Directory.Exists("BepInEx/config/ChatCommands")) Directory.CreateDirectory("BepInEx/config/ChatCommands");
+                File.Create("BepInEx/config/ChatCommands/rewards.json").Dispose();
             }
             if (!File.Exists("BepInEx/config/ChatCommands/WipeData.txt"))
             {
@@ -77,10 +79,10 @@ namespace ChatCommands
             harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
             Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
 
-            string filestring ="";
+            string filestring = "";
             string newstring = DateTime.UtcNow.ToString("MM-dd-yyyy");
 
-            if(isWipeFileFound)
+            if (isWipeFileFound)
                 filestring = System.IO.File.ReadAllText(@"BepInEx/config/ChatCommands/WipeData.txt");
             else
                 filestring = INITIALWIPEDATE;
@@ -88,8 +90,10 @@ namespace ChatCommands
             // [month,day,year]
             int[] filedate = DateHelper.Parse(filestring);
             int[] currentdate = DateHelper.Parse(newstring);
-            
-            DateHelper.writeDate(DateHelper.getWipeDate(DateHelper.getDif(filedate,currentdate)));
+
+            DateHelper.writeDate(DateHelper.getWipeDate(DateHelper.getDif(filedate, currentdate)));
+
+            Rewards.writeRewards();
 
 
         }
@@ -105,5 +109,9 @@ namespace ChatCommands
         {
             cmd.HandleCommands(ev, Log, Config);
         }
+
+
+
+         
     }
 }

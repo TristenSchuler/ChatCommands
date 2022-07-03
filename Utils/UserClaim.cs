@@ -1,31 +1,37 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
+/*
+Object holding information for user claims.
+user_id, claim_amount ,last_claim _time, last_claim_date
+
+Issue:
+https://github.com/TristenSchuler/ChatCommands/issues/7
+*/
 namespace ChatCommands.Utils
-{
-
-    /*
-    Object holding information for user claims.
-    user_id, claim_amount ,last_claim _time, last_claim_date
-
-    Issue:
-    https://github.com/TristenSchuler/ChatCommands/issues/7
-    */
+{   
+    [Serializable()]
     public class UserClaim
     {
-        int claim_amount { get; set; }
-        DateTime last_claim { get; set; }
+        public int claim_amount { get; set; }
+        public DateTime last_claim { get; set; }
 
-        public UserClaim(int c_amount, DateTime l_claim)
+        public UserClaim(int claim_amount, DateTime last_claim)
         {
-            this.claim_amount = c_amount;
-            this.last_claim = l_claim;
+            this.claim_amount = claim_amount;
+            this.last_claim = last_claim;
         }
 
         public DateTime getLastClaim()
         {
             return last_claim;
+        }
+
+        public void setLastClaim(DateTime claimtime)
+        {
+            this.last_claim = claimtime;
         }
 
         public int getClaimAmount()
@@ -35,7 +41,13 @@ namespace ChatCommands.Utils
 
         public void incrementClaimAmount()
         {
-            this.claim_amount++;
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("-------INCREMENT-------");
+            Console.WriteLine();
+            Console.WriteLine(this.claim_amount);
+            this.claim_amount+=1;
+            Console.WriteLine(this.claim_amount);
         }
 
     }

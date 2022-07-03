@@ -7,7 +7,7 @@ using System.IO;
 public class DateHelper
 {
     // Change this value to match your servers wipe schedule. 
-    private const int DAYS_BETWEEN_WIPES = 7;
+    public const int DAYS_BETWEEN_WIPES = 7;
     
     //Takes "mm-dd-yyyy" returns int arr [month,day,year]
     public static int[] Parse(string date)
