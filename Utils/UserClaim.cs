@@ -41,13 +41,7 @@ namespace ChatCommands.Utils
 
         public void incrementClaimAmount()
         {
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("-------INCREMENT-------");
-            Console.WriteLine();
-            Console.WriteLine(this.claim_amount);
             this.claim_amount+=1;
-            Console.WriteLine(this.claim_amount);
         }
 
     }

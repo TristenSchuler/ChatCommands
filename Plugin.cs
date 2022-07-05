@@ -12,6 +12,7 @@ using Wetstone.API;
 using Wetstone.Hooks;
 using System.Collections.Generic;
 using System.Linq;
+using ChatCommands.Commands;
 
 
 namespace ChatCommands
@@ -21,8 +22,7 @@ namespace ChatCommands
     [Reloadable]
     public class Plugin : BasePlugin
     {
-        
-        const string INITIALWIPEDATE = "06-17-2022";
+        const string INITIALWIPEDATE = "07-01-2022";
         private bool isWipeFileFound = false;
         private Harmony harmony;
 
@@ -35,6 +35,7 @@ namespace ChatCommands
 
         private void InitConfig()
         {
+
             Prefix = Config.Bind("Config", "Prefix", ".", "The prefix used for chat commands.");
             DisabledCommands = Config.Bind("Config", "Disabled Commands", "", "Enter command names to disable them. Seperated by commas. Ex.: health,speed");
             WaypointLimit = Config.Bind("Config", "Waypoint Limit", 3, "Sets a waypoint limit per user.");
@@ -67,7 +68,9 @@ namespace ChatCommands
                 File.Create("BepInEx/config/ChatCommands/WipeData.txt").Dispose();
             }
             else
+            {
                 isWipeFileFound = true;
+            }
 
         }
 
@@ -87,12 +90,22 @@ namespace ChatCommands
             else
                 filestring = INITIALWIPEDATE;
 
-            // [month,day,year]
-            int[] filedate = DateHelper.Parse(filestring);
-            int[] currentdate = DateHelper.Parse(newstring);
 
-            DateHelper.writeDate(DateHelper.getWipeDate(DateHelper.getDif(filedate, currentdate)));
 
+            TimeSpan span = DateTime.UtcNow.Subtract(DateHelper.getWipeDateTime());
+
+            // Empties userclaims.json if its the start of a new wipe. 
+            // && DateTime.UtcNow.Hour >= DateHelper.WIPEHOUR
+            if (span.Days >= DateHelper.DAYS_BETWEEN_WIPES)
+            {
+                Claim.resetClaims();
+            }
+            Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            Console.WriteLine("--------------------------DEBUG DATA----------------------");
+            Console.Write("span.Days,utcNow.Hour = " + span.Days + "," + DateTime.UtcNow.Hour);
+            Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            
+            DateHelper.writeDate(DateHelper.getWipeDate(DateHelper.getDif(DateHelper.Parse(filestring), DateHelper.Parse(newstring))));
             Rewards.writeRewards();
 
 
@@ -110,8 +123,5 @@ namespace ChatCommands
             cmd.HandleCommands(ev, Log, Config);
         }
 
-
-
-         
     }
 }

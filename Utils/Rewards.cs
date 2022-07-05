@@ -73,9 +73,11 @@ namespace ChatCommands.Utils
             1st Claim - 300 bones
             2nd Claim - 500 stone brick
             3rd Claim - 50 iron bars
-            4th Claim - a mid tier neck
-            5th Claim - a sanguine armor piece
-            6th Claim - a sanguine weapon
+            4th Claim - Sapphire Pendant 
+            5th Claim - Bloodmoon Chestguard
+            6th Claim - Sanguine Spear
+
+            GUIDs retrieved from : https://gaming.tools/v-rising 
         */
         public static void writeRewards()
         {

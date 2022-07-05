@@ -8,6 +8,8 @@ public class DateHelper
 {
     // Change this value to match your servers wipe schedule. 
     public const int DAYS_BETWEEN_WIPES = 7;
+    // Change this value to represent the hour your server wipes in military time UTC. 
+    public const int WIPEHOUR = 22;
     
     //Takes "mm-dd-yyyy" returns int arr [month,day,year]
     public static int[] Parse(string date)
@@ -98,11 +100,12 @@ public class DateHelper
             return new int[] { getDifResult[4], tempdif + oldday, getDifResult[5] };
         }
 
-
-
-        //same month
     }
 
+    public static DateTime getWipeDateTime()
+    {
+        return DateTime.Parse(File.ReadAllText(@"BepInEx/config/ChatCommands/WipeData.txt"));
+    }
     // For writing to WipeDate.txt 
     // Writes mm-dd-yyyy
     // Taken from https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/file-system/how-to-write-to-a-text-file

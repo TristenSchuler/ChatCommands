@@ -36,6 +36,8 @@ namespace ChatCommands.Commands
 
             bool claimsLoaded = loadClaims();
             bool rewardsLoaded = loadRewards();
+
+
             if (!rewardsLoaded)
             {
                 ctx.Event.User.SendSystemMessage($"Claim Failed - Failed to properly read \"rewards.json\".");
@@ -44,7 +46,7 @@ namespace ChatCommands.Commands
 
             if (!claimsLoaded)
             {
-                ctx.Event.User.SendSystemMessage($"Claim Failed - Failed to properly read \"userclaims.json\". Ignore if first claim on server.");
+                ctx.Event.User.SendSystemMessage($"Claim Failed - Failed to properly read \"userclaims.json\". Ignore if first claim since wipe.");
             }
 
             try
@@ -60,7 +62,7 @@ namespace ChatCommands.Commands
                 }
                 else
                 {
-                    userclaim = new UserClaim(claim_amount, DateTime.UtcNow.AddHours(COOLDOWN_IN_HOURS + 1));
+                    userclaim = new UserClaim(claim_amount, DateTime.UtcNow.AddHours((COOLDOWN_IN_HOURS + 1) * -1));
                     userclaims.Add(ctx.Event.User.PlatformId, userclaim);
                 }
 
@@ -69,8 +71,8 @@ namespace ChatCommands.Commands
                 if (!claimExists)
                 {
                     ctx.Event.User.SendSystemMessage($"You've claimed everything you can this wipe. Thank you for hanging out with us :" + ')');
-                    ctx.Event.User.SendSystemMessage($"Your rewards will reset next wipe which is " + DateHelper.DAYS_BETWEEN_WIPES +
-                                                       " days after " + File.ReadAllText(@"BepInEx/config/ChatCommands/WipeData.txt"));
+                    DateTime wipedate = DateHelper.getWipeDateTime();
+                    ctx.Event.User.SendSystemMessage($"Your rewards will reset next wipe which is " + wipedate.AddDays(DateHelper.DAYS_BETWEEN_WIPES));
                     return;
                 }
 
@@ -80,8 +82,8 @@ namespace ChatCommands.Commands
                     userclaim.setLastClaim(DateTime.UtcNow);
                     ctx.Event.User.SendSystemMessage($"Claim Successful!");
                     printGivenItems(ctx, reward);
-                    ctx.Event.User.SendSystemMessage($"Current amount of Claims: " + userclaim.getClaimAmount());
-                    ctx.Event.User.SendSystemMessage($"You can claim your next reward in: " + (COOLDOWN_IN_HOURS - getHourDifference(userclaim)) + " hours");
+                    ctx.Event.User.SendSystemMessage($"You have claimed " + userclaim.getClaimAmount() + " rewards this wipe.");
+                    ctx.Event.User.SendSystemMessage($"You can claim your next reward in: " + (getHourDifference(userclaim)) + " hours");
                     userclaims.Remove(ctx.Event.User.PlatformId);
                     userclaims.Add(ctx.Event.User.PlatformId, userclaim);
 
@@ -89,14 +91,14 @@ namespace ChatCommands.Commands
                 else
                 {
                     ctx.Event.User.SendSystemMessage($"Claim Failed.");
-                    ctx.Event.User.SendSystemMessage($"Current amount of Claims: " + userclaim.getClaimAmount());
-                    ctx.Event.User.SendSystemMessage($"You can claim your next reward in: " + (COOLDOWN_IN_HOURS - getHourDifference(userclaim)) + " hours");
+                    ctx.Event.User.SendSystemMessage($"You have claimed " + userclaim.getClaimAmount() + " rewards this wipe.");
+                    ctx.Event.User.SendSystemMessage($"You can claim your next reward in: " + (getHourDifference(userclaim)) + " hours");
                 }
 
             }
             catch
             {
-                ctx.Event.User.SendSystemMessage($"Claim Failed. Not from claim amount ");
+                ctx.Event.User.SendSystemMessage($"Claim Failed.");
                 return;
             }
 
@@ -105,12 +107,25 @@ namespace ChatCommands.Commands
 
         }
 
+
+        public static void resetClaims()
+        {
+            Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            Console.WriteLine("----------------------IN RESETCLAIMS()-----------------------------------------------------");
+            Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            userclaims = new Dictionary<ulong, UserClaim>();
+            updateClaims();
+
+        }
+
         private static bool tryClaim(Context ctx, UserClaim uclaim, Rewards r)
         {
             try
             {
-                if (getHourDifference(uclaim) >= COOLDOWN_IN_HOURS)
+                ctx.Event.User.SendSystemMessage($"" + getHourDifference(uclaim));
+                if (getHourDifference(uclaim) < 1)
                 {
+
                     Console.WriteLine();
                     Console.WriteLine();
                     Console.WriteLine("----------------------PASSED HOUR DIFF--------------------------------");
@@ -139,7 +154,7 @@ namespace ChatCommands.Commands
             DateTime claim_dt = DateTime.UtcNow;
             DateTime last_claim_dt = uclaim.getLastClaim();
 
-            TimeSpan span = last_claim_dt.Subtract(claim_dt);
+            TimeSpan span = claim_dt.Subtract(last_claim_dt);
 
 
             int totalhours = span.Hours + span.Days * 24;
@@ -151,7 +166,8 @@ namespace ChatCommands.Commands
             Console.WriteLine();
             Console.WriteLine();
 
-            return totalhours;
+
+            return COOLDOWN_IN_HOURS - totalhours;
         }
 
         /*
@@ -165,11 +181,6 @@ namespace ChatCommands.Commands
             try
             {
                 string json = File.ReadAllText("BepInEx/config/ChatCommands/userclaims.json");
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine("-----START TRY------");
-                Console.WriteLine();
-                Console.WriteLine();
                 userclaims = JsonSerializer.Deserialize<Dictionary<ulong, UserClaim>>(json);
                 Console.WriteLine("loaded increment: " + userclaims.First().Value.claim_amount);
                 return true;
@@ -240,12 +251,8 @@ namespace ChatCommands.Commands
                 //[key,itemname,guid,itemamount,creq]
                 string[] varsplit = new string[5];
 
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine(reader.ReadLine());
-                Console.WriteLine();
-                Console.WriteLine();
+                string lineskipped = reader.ReadLine();
+
                 Rewards r;
                 string guid = "";
                 int guidstart = 0;
